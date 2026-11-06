@@ -1,17 +1,36 @@
 # Windows
 
-PowerSheel Scripts and Tools
+PowerShell scripts and registry tweaks for Windows hardening and configuration.
 
-Execution Policy    Level of Security 
-Restricted          Will only allow interactive shell execution.
-AllSigned           Runs only scripts with a digital signature. Executing a script for the first time will prompt a trust publisher message.
-RemoteSigned        All scripts from the Internet must be signed.
-Unrestricted        Allows any script execution. Scripts from the Internet must be trusted.
-ByPass              Every script execution must be validated by the user.
+> Test every script and .reg file on a non-production machine first. Registry changes can affect system behaviour, and each Disable file has a matching Enable file to revert it.
 
-Miscellaneous
-Add Azure User to Remote Users Group
+## PowerShell execution policy
 
+| Policy | Behaviour |
+| --- | --- |
+| Restricted | Only interactive commands, no scripts. |
+| AllSigned | Only scripts signed by a trusted publisher. |
+| RemoteSigned | Scripts downloaded from the Internet must be signed. Local scripts run. |
+| Unrestricted | Runs any script, with a warning for scripts from the Internet. |
+| Bypass | Nothing is blocked and there are no warnings. |
+
+Check and set the policy:
+
+```powershell
+Get-ExecutionPolicy -List
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+## Miscellaneous
+
+Add an Azure AD user to the Remote Desktop Users group:
+
+```cmd
 net localgroup "Remote Desktop Users" /add "AzureAD\the-UPN-attribute-of-your-user"
+```
 
+On a Portuguese Windows, the group name is localized:
+
+```cmd
 net localgroup "Utilizadores do ambiente de trabalho remoto" /add "AzureAD\the-UPN-attribute-of-your-user"
+```
